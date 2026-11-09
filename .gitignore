@@ -1,0 +1,44 @@
+# Data files and generated pipeline outputs (keep them outside GitHub)
+/data/
+/output/
+/*.parquet
+*.parquet
+*.jsonl
+*.geojson
+
+# Python environments, caches, and local credentials
+.venv/
+venv/
+hvfhs-venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.cache/
+*.log
+*.tmp
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Spark/Hadoop local metadata, staging, and checkpoints
+spark-warehouse/
+metastore_db/
+spark-events/
+.sparkStaging/
+spark_tmp/
+checkpoints/
+*.crc
+*.vhdx
+
+# Local logs and temporary work directories
+logs/
+tmp/
+
+# Local operating-system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini

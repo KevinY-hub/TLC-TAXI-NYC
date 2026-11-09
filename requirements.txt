@@ -1,0 +1,6 @@
+# Tested in WSL on Python 3.14 and OpenJDK 21.
+pyspark==4.2.0
+pyarrow==26.0.0
+pandas==3.0.6
+streamlit==1.66.0
+plotly==7.1.0
