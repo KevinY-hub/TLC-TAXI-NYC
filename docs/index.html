@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Dashboard publik analisis perjalanan NYC HVFHV dan cuaca, Januari sampai Juni 2026.">
+    <title>NYC Mobility & Weather Dashboard</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-mark" aria-hidden="true">NYC</div>
+      <div>
+        <p class="eyebrow">MOBILITY · WEATHER · JAN–JUN 2026</p>
+        <h1>Perjalanan NYC &amp; cuaca</h1>
+        <p class="subtitle">Analisis deskriptif perjalanan High Volume For-Hire Vehicle di New York City.</p>
+      </div>
+    </header>
+
+    <main>
+      <div id="status" class="status" role="status">Memuat data dashboard...</div>
+      <div id="dashboard" hidden>
+        <section class="toolbar" aria-label="Filter dashboard">
+          <div class="date-filter">
+            <label for="start-date">Mulai</label>
+            <input id="start-date" type="date">
+            <label for="end-date">Sampai</label>
+            <input id="end-date" type="date">
+          </div>
+          <p>Filter tanggal berlaku untuk ringkasan dan tren temporal. Analisis spasial memakai seluruh periode.</p>
+        </section>
+
+        <nav class="tabs" aria-label="Bagian dashboard">
+          <button class="tab active" type="button" data-page="overview">Ringkasan</button>
+          <button class="tab" type="button" data-page="temporal">Tren temporal</button>
+          <button class="tab" type="button" data-page="weather">Cuaca</button>
+          <button class="tab" type="button" data-page="spatial">Pola spasial</button>
+          <button class="tab" type="button" data-page="graph">Analisis jaringan</button>
+        </nav>
+
+        <section class="page active" id="page-overview">
+          <div class="hero">
+            <div>
+              <p class="eyebrow">RINGKASAN EKSPLORATIF</p>
+              <h2>Mobilitas kota, dilihat dari waktu dan cuaca</h2>
+              <p>Angka berasal dari agregat yang sudah divalidasi; data perjalanan tingkat baris tidak dimuat oleh situs.</p>
+            </div>
+            <span class="hero-icon" aria-hidden="true">↗</span>
+          </div>
+          <div class="metrics" id="overview-metrics"></div>
+          <article class="panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">VOLUME PERJALANAN</p><h3>Per perjalanan per bulan</h3></div>
+              <span class="subtle">Dalam rentang tanggal terpilih</span>
+            </div>
+            <div class="chart" id="overview-monthly"></div>
+          </article>
+          <p class="callout" id="quality-note"></p>
+        </section>
+
+        <section class="page" id="page-temporal" hidden>
+          <div class="section-heading">
+            <p class="eyebrow">KAPAN PERJALANAN TERJADI?</p>
+            <h2>Tren temporal</h2>
+            <p>Waktu pickup ditampilkan menurut tanggal dan jam lokal America/New_York.</p>
+          </div>
+          <div class="chart-grid two">
+            <article class="panel"><div class="chart" id="daily-chart"></div></article>
+            <article class="panel"><div class="chart" id="hour-chart"></div></article>
+          </div>
+          <article class="panel"><div class="chart" id="weekday-chart"></div></article>
+          <p class="footnote">Grafik jam dan hari dihitung dari tabel tanggal-jam sehingga mengikuti filter tanggal. Jam 02:00 saat transisi DST musim semi mencakup pickup yang dipertahankan dengan penanda kualitas.</p>
+        </section>
+
+        <section class="page" id="page-weather" hidden>
+          <div class="section-heading">
+            <p class="eyebrow">KONDISI CUACA</p>
+            <h2>Perjalanan dan cuaca</h2>
+            <p>Pola yang ditampilkan bersifat <strong>deskriptif</strong> dan tidak membuktikan bahwa cuaca menyebabkan perubahan volume perjalanan.</p>
+          </div>
+          <div class="chart-grid two">
+            <article class="panel"><div class="chart" id="weather-count-chart"></div></article>
+            <article class="panel"><div class="chart" id="weather-mean-chart"></div></article>
+          </div>
+          <article class="panel"><div class="chart" id="weather-month-chart"></div></article>
+          <p class="footnote">Rata-rata menggunakan jumlah observasi cuaca zona-jam valid sebagai denominator, bukan jumlah baris perjalanan. Data kategori cuaca tersedia per bulan; filter tanggal parsial tetap menampilkan bulan penuh pada grafik ini.</p>
+          <details class="panel definitions">
+            <summary>Definisi kategori dan prioritas</summary>
+            <div id="weather-definitions"></div>
+          </details>
+        </section>
+
+        <section class="page" id="page-spatial" hidden>
+          <div class="section-heading">
+            <p class="eyebrow">DI MANA PERJALANAN TERJADI?</p>
+            <h2>Pola spasial pickup</h2>
+            <p>Zona dan borough berasal dari pemetaan Taxi Zone. LocationID tidak diperlakukan sebagai borough.</p>
+          </div>
+          <div class="filters">
+            <label>Borough
+              <select id="borough-filter"></select>
+            </label>
+            <label>Jumlah zona
+              <select id="zone-limit">
+                <option value="10">10</option><option value="15" selected>15</option>
+                <option value="20">20</option><option value="25">25</option><option value="30">30</option>
+              </select>
+            </label>
+          </div>
+          <article class="panel">
+            <div class="panel-heading"><div><p class="eyebrow">PETA TAKSI NYC</p><h3>Volume pickup per Taxi Zone</h3></div><span class="subtle">Arahkan kursor ke zona untuk rincian</span></div>
+            <div class="chart map-chart" id="pickup-map"></div>
+            <p class="footnote" id="pickup-map-note"></p>
+          </article>
+          <div class="chart-grid two">
+            <article class="panel"><div class="chart" id="top-zones-chart"></div></article>
+            <article class="panel"><div class="chart" id="borough-chart"></div></article>
+          </div>
+          <article class="panel"><div class="chart" id="zone-weather-chart"></div></article>
+          <p class="footnote">Nilai kategori cuaca yang tidak tersedia tetap dipisahkan dari kategori yang teramati. Analisis spasial mencakup seluruh periode Januari–Juni 2026.</p>
+        </section>
+
+        <section class="page" id="page-graph" hidden>
+          <div class="section-heading">
+            <p class="eyebrow">PICKUP → DROP-OFF</p>
+            <h2>Analisis jaringan perjalanan</h2>
+            <p>Graf berarah berbobot: pickup zone ke drop-off zone; bobot adalah jumlah perjalanan.</p>
+          </div>
+          <div class="filters">
+            <label>Periode graf<select id="graph-period"></select></label>
+            <label>Jumlah zona/rute
+              <select id="graph-limit"><option>5</option><option selected>10</option><option>15</option><option>20</option></select>
+            </label>
+            <label>Metrik zona
+              <select id="graph-metric"><option value="strength">Trip strength (volume)</option><option value="degree">Degree (tetangga unik)</option></select>
+            </label>
+            <label>Nilai peta
+              <select id="graph-map-metric"><option value="out_strength_trips">Volume pickup keluar</option><option value="in_strength_trips">Volume drop-off masuk</option></select>
+            </label>
+          </div>
+          <div class="metrics" id="graph-metrics"></div>
+          <p class="callout">Degree menghitung jumlah zona tetangga unik; strength menjumlahkan volume perjalanan. Satu weak component berarti seluruh zona terhubung jika arah perjalanan diabaikan—bukan berarti semua zona saling terjangkau dalam arah tertentu.</p>
+          <div class="chart-grid two">
+            <article class="panel"><div class="chart" id="graph-trips-chart"></div></article>
+            <article class="panel"><div class="chart" id="graph-pairs-chart"></div></article>
+          </div>
+          <div class="chart-grid two">
+            <article class="panel"><div class="chart" id="graph-origins-chart"></div></article>
+            <article class="panel"><div class="chart" id="graph-destinations-chart"></div></article>
+          </div>
+          <article class="panel"><div class="chart" id="top-routes-chart"></div></article>
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">ARUS PERJALANAN</p><h3>Kekuatan aliran antarzona</h3></div></div><div class="chart map-chart" id="graph-map"></div></article>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <span>NYC TLC HVFHV · Analisis eksploratif Januari–Juni 2026</span>
+      <span>Data agregat · bukan untuk menyimpulkan hubungan sebab-akibat</span>
+    </footer>
+  </body>
+</html>

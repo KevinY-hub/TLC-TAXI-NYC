@@ -1,0 +1,19 @@
+{
+  "source": "NYC TLC HVFHV and Open-Meteo validated aggregates",
+  "period": "2026-01 through 2026-06",
+  "raw_trip_rows_included": false,
+  "records": {
+    "daily.json": 181,
+    "date_hour.json": 4344,
+    "weather_monthly.json": 25,
+    "locations.json": 262,
+    "boroughs.json": 7,
+    "zone_weather.json": 1091,
+    "analysis_summary.json": 12,
+    "weather_category_summary.json": 5,
+    "weather_category_definitions.json": 6,
+    "taxi_zones.json": 258
+  },
+  "graph_zone_records": 1843,
+  "top_graph_edge_records": 140
+}
